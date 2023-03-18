@@ -41,7 +41,7 @@ export class PostDatabase extends BaseDatabase{
 
         const commentsDB = await BaseDatabase
         .connection(PostDatabase.COMMENTS_TABLE)
-        .select("comments_posts.*","users.username")
+        .select("comments_posts.*","users.name")
         .leftJoin(PostDatabase.USERS_TABLE,"users.id","=","comments_posts.creator_id")
 
         return{
