@@ -52,9 +52,9 @@ public loginUser = async (req: Request, res: Response) => {
 
   public getAllUsers = async (req: Request, res: Response) => {
     try {
-      const name = req.query.name as string | undefined
+      const email = req.query.email as string | undefined
     
-      const output = await this.userBusiness.getAllUsers(name)
+      const output = await this.userBusiness.getAllUsers(email)
     
       res.status(200).send(output)
     } catch (error) {
