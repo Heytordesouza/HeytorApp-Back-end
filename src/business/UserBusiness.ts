@@ -18,37 +18,45 @@ export class UserBusiness {
   ){}
 
 
-  public getAllUsers = async (name:string | undefined): Promise<GetUsersOutputDTO> =>{
+  // public getAllUsers = async (email:string | undefined): Promise<GetUsersOutputDTO> =>{
     
-    if (typeof name !== "string" && name !== undefined) {
-      throw new BadRequestError("'name' deve ser string ou undefined")
-    }
+  //   if (typeof email !== "string" && email !== undefined) {
+  //     throw new BadRequestError("'email' deve ser string ou undefined")
+  //   }
 
-    const usersDB:UserDB[] = await this.userDatabase.findUser(name)
+  //   const usersDB: UserDB[] = await this.userDatabase.findUser(email)
 
-    const users: Users[] = usersDB.map((user)=>{
-        return new Users(
-            user.id,
-            user.name,
-            user.email,
-            user.password,
-            user.role,
-            user.created_at
-        )
-    })
+  //   const users: Users[] = usersDB.map((user)=>{
+  //       return new Users(
+  //           user.id,
+  //           user.name,
+  //           user.email,
+  //           user.password,
+  //           user.role,
+  //           user.created_at
+  //       )
+  //   })
     
-    const output = this.userDTO.getUsersOutputDTO(users)
+  //   const output = this.userDTO.getUsersOutputDTO(users)
 
-    return output
-  }
+  //   return output
+  // }
 
   public signupUser = async (input: SignupUserInputDTO): Promise<SignupUserOutputDTO> => {
     const {name, email, password} = input
 
-    const userVerification = await this.userDatabase.getUserByEmail(email)
+    if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+      throw new BadRequestError("O email deve ter o formato 'exemplo@exemplo.com'.")
+    }
 
-      if(userVerification){
-        throw new BadRequestError("'Email' já cadastrado")
+    if (!password.match(/^.{4,15}$/)) {
+      throw new BadRequestError("'password' deve possuir entre 4 e 15 caracteres")
+    }
+
+    const userVerification = await this.userDatabase.findUser(email)
+
+    if(userVerification){
+      throw new BadRequestError("'email' já cadastrado")
     }
 
     const id = this.idGenerator.generate()
@@ -82,22 +90,33 @@ export class UserBusiness {
   public loginUser = async (input: any) => {
     const {email, password} = input
 
-    const user = await this.userDatabase.getUserByEmail(email)
+    const userDBExists = await this.userDatabase.findUser(email)
 
-    if(!user){
-      throw new NotFoundError("Usuário não encontrado")
+    if(!userDBExists){
+      throw new NotFoundError("'email' incorreto ou não cadastrado")
     }
 
-    const passwordHash = await this.hashManager.compare(password, user.password)
+    const user = new Users(
+      userDBExists.id,
+      userDBExists.name,
+      userDBExists.email,
+      userDBExists.password,
+      userDBExists.role,
+      userDBExists.created_at
+    )
+
+    const hashedPassword = user.getPassword()
+
+    const passwordHash = await this.hashManager.compare(password, hashedPassword)
 
     if(!passwordHash){
-      throw new BadRequestError("'email' ou 'password' incorretos")
+      throw new BadRequestError("'Senha' incorreta")
     }
 
     const tokenPayload: TokenPayload ={
-      id: user.id,
-      name: user.name,
-      role: user.role
+      id: user.getId(),
+      name: user.getName(),
+      role: user.getRole()
     }
 
     const token = this.tokenManager.createToken(tokenPayload)
