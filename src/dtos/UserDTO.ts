@@ -1,18 +1,4 @@
 import { BadRequestError } from "../errors/BadRequestError"
-import { Users } from "../models/Users"
-import { USER_ROLES } from "../services/TokenManager"
-import { UserOutput } from "../types"
-
-export interface GetUsersOutputDTO{
-    users:{
-        id:string,
-        name:string,
-        email:string,
-        password: string,
-        role:USER_ROLES,
-        createdAt:string,
-    }[]
-}
 
 export interface SignupUserInputDTO {
     name: string,
@@ -34,16 +20,6 @@ export interface LoginUserOutputDTO {
 }
 
 export class UserDTO {
-
-    public getUsersOutputDTO = (users:Users[]) : GetUsersOutputDTO => {
-        const getUsers : UserOutput[]= 
-        users.map((user)=> user.getUserOutput())
-        const dto : GetUsersOutputDTO = {
-            users: getUsers        
-        }
-
-        return dto
-    }
 
     public signupUserInput = (name: unknown, email: unknown, password: unknown): SignupUserInputDTO => {
 
@@ -68,6 +44,13 @@ export class UserDTO {
         return dto
     }
 
+    public signupUsersOutput(token: string):SignupUserOutputDTO{
+        const dto: SignupUserOutputDTO = {
+            token
+        }
+        return dto
+    }
+
     public loginUserInput = (email: unknown, password: unknown): LoginUserInputDTO => {
 
         if (typeof email !== "string") {
@@ -83,6 +66,13 @@ export class UserDTO {
         password
         }
     
+        return dto
+    }
+
+    public loginUserOutput(token: string): LoginUserOutputDTO{
+        const dto:LoginUserOutputDTO = {
+            token
+        }
         return dto
     }
 }

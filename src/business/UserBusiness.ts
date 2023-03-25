@@ -1,12 +1,12 @@
 import { UserDatabase } from "../database/UserDatabase"
-import { GetUsersOutputDTO, LoginUserOutputDTO, SignupUserInputDTO, SignupUserOutputDTO, UserDTO } from "../dtos/UserDTO"
+import { LoginUserInputDTO, LoginUserOutputDTO, SignupUserInputDTO, SignupUserOutputDTO, UserDTO } from "../dtos/UserDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Users } from "../models/Users"
 import { HashManager } from "../services/HashManager"
 import { IdGenerator } from "../services/idGenerator"
-import { TokenManager, TokenPayload, USER_ROLES } from "../services/TokenManager"
-import { UserDB } from "../types"
+import { TokenManager } from "../services/TokenManager"
+import { TokenPayload, USER_ROLES } from "../types"
 
 export class UserBusiness {
   constructor(
@@ -16,31 +16,6 @@ export class UserBusiness {
     private tokenManager: TokenManager,
     private hashManager: HashManager
   ){}
-
-
-  // public getAllUsers = async (email:string | undefined): Promise<GetUsersOutputDTO> =>{
-    
-  //   if (typeof email !== "string" && email !== undefined) {
-  //     throw new BadRequestError("'email' deve ser string ou undefined")
-  //   }
-
-  //   const usersDB: UserDB[] = await this.userDatabase.findUser(email)
-
-  //   const users: Users[] = usersDB.map((user)=>{
-  //       return new Users(
-  //           user.id,
-  //           user.name,
-  //           user.email,
-  //           user.password,
-  //           user.role,
-  //           user.created_at
-  //       )
-  //   })
-    
-  //   const output = this.userDTO.getUsersOutputDTO(users)
-
-  //   return output
-  // }
 
   public signupUser = async (input: SignupUserInputDTO): Promise<SignupUserOutputDTO> => {
     const {name, email, password} = input
@@ -87,7 +62,7 @@ export class UserBusiness {
     return(output)
   }
 
-  public loginUser = async (input: any) => {
+  public loginUser = async (input: LoginUserInputDTO): Promise<LoginUserOutputDTO> => {
     const {email, password} = input
 
     const userDBExists = await this.userDatabase.findUser(email)

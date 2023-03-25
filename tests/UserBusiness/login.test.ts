@@ -38,7 +38,7 @@ describe("login", () => {
     })
 
     test("retornar erro caso 'password' esteja incorreta", async () => {
-        // expect.assertions(2)
+        expect.assertions(2)
         try {
             const input: LoginUserInputDTO = {
                 email: "admin@email.com",

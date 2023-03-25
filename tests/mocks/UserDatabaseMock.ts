@@ -1,6 +1,5 @@
 import { BaseDatabase } from "../../src/database/BaseDatabase"
-import { UserDB } from "../../src/types"
-import { USER_ROLES } from "../../src/services/TokenManager"
+import { UserDB, USER_ROLES } from "../../src/types"
 
 export class UserDatabaseMock extends BaseDatabase {
     public static TABLE_USERS = "users"

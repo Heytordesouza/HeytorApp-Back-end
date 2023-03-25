@@ -21,7 +21,7 @@ CREATE TABLE posts(
 );
 
 
-CREATE TABLE comments_posts (
+CREATE TABLE comments (
     id TEXT PRIMARY KEY NOT NULL UNIQUE, 
     creator_id TEXT NOT NULL, 
     content TEXT,
@@ -34,7 +34,7 @@ CREATE TABLE comments_posts (
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 
-CREATE TABLE likes_dislikes(
+CREATE TABLE likes_dislikes_posts(
     user_id TEXT NOT NULL,
     post_id TEXT NOT NULL,
     like INTEGER,
@@ -42,14 +42,14 @@ CREATE TABLE likes_dislikes(
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 
-DROP TABLE posts;
+DROP TABLE users;
 
 CREATE TABLE likes_dislikes_comments(
     user_id TEXT NOT NULL, 
     comment_id TEXT NOT NULL, 
     like INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(id)
-    FOREIGN KEY (comment_id) REFERENCES comments_posts(id)
+    FOREIGN KEY (comment_id) REFERENCES comments(id)
 );
 
 INSERT INTO users (id, name, email, password, role)
@@ -61,7 +61,7 @@ VALUES ("p001", "u001", "Você quer visitar qual cidade do mundo?"),
 ("p002", "u002", "Qual time você torce?"),
 ("p003", "u002", "Melhor filme que já viu?");
 
-INSERT INTO comments_posts(id, creator_id, content, post_id)
+INSERT INTO comments(id, creator_id, content, post_id)
 VALUES("c001", "u002", "Tóquio", "p001"),
 ("c002", "u001", "Flamengo", "p002"),
 ("c003", "u001", "Interestelar", "p003");
@@ -70,8 +70,8 @@ SELECT * FROM users;
 
 SELECT * FROM posts;
 
-SELECT * FROM comments_posts;
+SELECT * FROM comments;
 
-SELECT * FROM likes_dislikes;
+SELECT * FROM likes_dislikes_posts;
 
 SELECT * FROM likes_dislikes_comments;

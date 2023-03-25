@@ -1,5 +1,4 @@
-import { USER_ROLES } from "../services/TokenManager"
-import { UserDB, UserOutput } from "../types"
+import { UserDB, UserOutput, USER_ROLES } from "../types"
 
 export class Users{
     constructor(

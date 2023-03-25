@@ -1,4 +1,4 @@
-import { PostbyUsersDB, PostWithCommentsDB, PostDB, CommentDB, CommentWithCreatorDB, LikeDislikeDB} from "../types";
+import {PostModel, PostDB} from "../types";
 
 export class Post {
     constructor(
@@ -7,73 +7,38 @@ export class Post {
         private comments: number,
         private likes: number,
         private dislikes: number,
-        private created_at: string,
-        private updated_at: string,
-        private creator: {
-            id: string,
-            name: string,
-        },
-        private comments_post: CommentWithCreatorDB,
+        private createdAt: string,
+        private updatedAt: string,
+        private creatorId: string,
+        private creatorName: string
     ){}
 
     public toDBModel(): PostDB{
         return {
             id:this.id,
-            creator_id: this.creator.id,
+            creator_id: this.creatorId,
             comments: this.comments,
             content: this.content,
             likes: this.likes,
             dislikes: this.dislikes,
-            created_at: this.created_at,
-            updated_at: this.updated_at,        
+            created_at: this.createdAt,
+            updated_at: this.updatedAt,        
         }
     }
 
-    public toDBCommentModel(): CommentDB{
-        return {
-            id:this.id,
-            creator_id: this.creator.id,
-            post_id: this.comments_post.post_id,
-            content: this.content,
-            likes: this.likes,
-            dislikes: this.dislikes,
-            created_at: this.created_at,
-            updated_at: this.updated_at,        
-        }
-    }
-
-    public toDBLikeDislikeModel():LikeDislikeDB{
-        return{
-            post_id: this.id,
-            user_id: this.creator.id,
-            like: this.likes,
-        }
-    }
-
-    public toBusinessModel():PostbyUsersDB{
+    public toBusinessModel():PostModel{
         return{
             id: this.id,
             content: this.content,
             comments: this.comments,
             likes: this.likes,
             dislikes: this.dislikes,
-            created_at: this.created_at,
-            updated_at: this.updated_at,
-            creator: this.creator,
-        }
-    }
-
-    public toBusinessCommentsModel():PostWithCommentsDB{
-        return{
-            id: this.id,
-            content: this.content,
-            comments: this.comments,
-            likes: this.likes,
-            dislikes: this.dislikes,
-            created_at: this.created_at,
-            updated_at: this.updated_at,
-            creator: this.creator,
-            comments_post: this.comments_post          
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            creator: {
+                id: this.creatorId,
+                name: this.creatorName
+            }
         }
     }
 
@@ -101,12 +66,24 @@ export class Post {
         this.comments = value
     }
 
+    public addCommentsPosts() {
+        this.comments +=1
+    }
+
     public getLikes():number{
         return this.likes
     }
 
     public setLikes(value:number){
         this.likes = value
+    }
+
+    public addLike() {
+        this.likes +=1
+    }
+
+    public removeLike() {
+        this.likes -=1
     }
 
     public getDislikes():number{
@@ -117,31 +94,44 @@ export class Post {
         this.dislikes = value
     }
 
+    public addDislike() {
+        this.dislikes +=1
+    }
+
+    public removeDislike() {
+        this.dislikes -=1
+    }
+
     public getCreatedAt():string{
-        return this.created_at
+        return this.createdAt
     }
 
     public setCreatedAt(value:string){
-        this.created_at = value
+        this.createdAt = value
     }
 
     public getUpdatedAt():string{
-        return this.updated_at
+        return this.updatedAt
     }
 
     public setUpdatedAt(value:string){
-        this.updated_at = value
+        this.updatedAt = value
     }
 
-    public getCreator():{
-        id: string,
-        name: string,
-    }{
-        return this.creator
+    public getCreatorId():string {
+        return this.creatorId
+    }
+ 
+    public setCreatorId(value:string):void {
+        this.creatorId = value
     }
 
-    public setCreator(value:{id: string,name: string,}){
-        this.creator = value
+    public getCreatorName():string{
+        return this.creatorName
+    }
+ 
+    public setCreatorName(value:string):void{
+        this.creatorName = value
     }
 
 }
