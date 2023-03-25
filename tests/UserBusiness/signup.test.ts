@@ -27,7 +27,7 @@ describe("signup", () => {
     })
 
     test('retornar erro caso o email fornecido já tenha sido cadastrado', async() => {
-        // expect.assertions(2)
+        expect.assertions(2)
         try {
             const input: SignupUserInputDTO = {
                 name: "Example Mock",
@@ -44,12 +44,12 @@ describe("signup", () => {
     })
 
     test("retornar erro caso 'password' não esteja no padrão determinado", async () => {
-        // expect.assertions(2)
+        expect.assertions(2)
         try {
             const input: SignupUserInputDTO = {
                 name: "Example Mock",
                 email: "example@email.com",
-                password: "Senha"
+                password: "Sen"
             }
             await userBusiness.signupUser(input)
 
@@ -63,7 +63,7 @@ describe("signup", () => {
 
 
     test("retornar erro caso 'email' não esteja no padrão determinado", async () => {
-        // expect.assertions(2)
+        expect.assertions(2)
         try {
             const input: SignupUserInputDTO = {
                 name: "Example Mock",

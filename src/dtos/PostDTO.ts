@@ -1,168 +1,286 @@
 import { BadRequestError } from "../errors/BadRequestError"
+import { Post } from "../models/Post"
+import { Comment } from "../models/Comment"
+import { PostModel } from "../types"
 
-export interface GetAllPostsInputDTO {
-    q: string,
-    token: string,
+export interface GetPostInputDTO {
+    token: string | undefined
 }
 
-export interface GetPostsInputDTO {
+export type GetPostOuputDTO = PostModel[]
+
+export interface GetPostByIdInputDTO {
     id: string,
-    token: string,
+    token: string | undefined
 }
 
-export interface InsertInputPostDTO {
-    content: string,
-    token: string,
-}
-
-export interface InsertInputCommentDTO {
-    id_post: string,
-    content: string,
-    token: string,
-}
-
-export interface UpdateInputDTO {
+export type GetPostByIdOuputDTO = {
     id: string,
     content: string,
-    token: string,
+    likes: number,
+    dislikes: number,
+    comments: number,
+    createdAt: string,
+    updatedAt: string,
+    creator: {
+        id: string,
+        name: string
+    },
+    comment: [{
+        id: string,
+        postId: string,
+        content: string,
+        likes: number,
+        dislikes: number,
+        createdAt: string,
+        updatedAt: string,
+        creator: {
+            id: string,
+            name: string
+        }
+    }]
 }
 
-export interface DeleteInputPostDTO {
-    id: string,
-    token: string,
+export interface CreatePostInputDTO {
+    token: string | undefined,
+    content: string
 }
 
-export interface LikeDislikeDTO {
+export interface CreatePostOutputDTO {
+    message: string,
+    post: {
+        id: string,
+        content: string,
+        likes: number,
+        dislikes: number,
+        comments: number,
+        createdAt: string,
+        updatedAt: string,
+        creatorId: string,
+        creatorName: string
+    }
+}
+
+export interface UpdatePostInputDTO {
     id: string,
-    like: number,
-    token: string,
+    token: string | undefined,
+    content: string
+}
+
+export interface UpdatePostOutputDTO {
+    message: string,
+    content: string
+}
+
+export interface DeletePostInputDTO {
+    id: string,
+    token: string | undefined
+}
+
+export interface DeletePostOutputDTO {
+    message: string
+}
+
+export interface LikeDislikePostInputDTO {
+    id: string,
+    token: string | undefined
+    like: number
+}
+
+export interface LikeDislikePostOutputDTO {
+    message: string
 }
 
 export class PostDTO {
-
-    getAllPostsInput = (q: string, token: string): GetAllPostsInputDTO => {
+    public getPostInput(
+        token: unknown
+    ): GetPostInputDTO {
 
         if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
+            throw new BadRequestError("'token' deve ser string")
         }
 
-        const result: GetAllPostsInputDTO = {
-            q,
-            token,
+        const dto: GetPostInputDTO = {
+            token
         }
-        return result
+
+        return dto
     }
 
-    getPostInput = (id: string, token: string): GetPostsInputDTO => {
-
-        if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
+    public getPostByIdInput(
+        id: unknown,
+        token: undefined
+    ): GetPostByIdInputDTO {
+        if (typeof id !== "string") {
+            throw new BadRequestError("'id' deve ser string")
         }
 
-        const result: GetPostsInputDTO = {
+        if (typeof token !== "string") {
+            throw new BadRequestError("'token' deve ser string")
+        }
+
+        const dto: GetPostByIdInputDTO = {
             id,
             token
         }
-        return result
+
+        return dto
     }
 
-    insertInputPost = (content: string, token: string): InsertInputPostDTO => {
+    public getPostByIdOutput(post: Post, comment: Comment): GetPostByIdOuputDTO {
+        const dto: GetPostByIdOuputDTO = {
+            id: post.getId(),
+            content: post.getContent(),
+            likes: post.getLikes(),
+            dislikes: post.getDislikes(),
+            comments: post.getComments(),
+            createdAt: post.getCreatedAt(),
+            updatedAt: post.getUpdatedAt(),
+            creator: {
+                id: post.getCreatorId(),
+                name: post.getCreatorName()
+            },
+            comment: [{
+                id: comment.getId(),
+                postId: comment.getPostId(),
+                content: comment.getContent(),
+                likes: comment.getLikes(),
+                dislikes: comment.getDislikes(),
+                createdAt: comment.getCreatedAt(),
+                updatedAt: comment.getUpdatedAt(),
+                creator: {
+                    id: comment.getCreatorId(),
+                    name: comment.getCreatorName()
+                }
+            }]
+        }
+        return dto
+    }
+
+    public createPostInput(
+        token: unknown,
+        content: unknown
+    ): CreatePostInputDTO {
 
         if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
+            throw new BadRequestError("'token' deve ser string")
+        }
+        if (typeof content !== "string") {
+            throw new BadRequestError("'content' deve ser string")
         }
 
-        if (content !== undefined) {
-            if (typeof content !== "string") {
-                throw new BadRequestError("'content' precisa ser uma string")
+        const dto: CreatePostInputDTO = {
+            token,
+            content
+        }
+        return dto
+    }
+
+    public createPostOutput(post: Post): CreatePostOutputDTO {
+        const dto: CreatePostOutputDTO = {
+            message: "Post criado com sucesso",
+            post: {
+                id: post.getId(),
+                content: post.getContent(),
+                likes: post.getLikes(),
+                dislikes: post.getDislikes(),
+                comments: post.getComments(),
+                createdAt: post.getCreatedAt(),
+                updatedAt: post.getUpdatedAt(),
+                creatorId: post.getCreatorId(),
+                creatorName: post.getCreatorName()
             }
-        } else {
-            throw new BadRequestError("Favor, informar o 'content'")
         }
-
-        const result: InsertInputPostDTO = {
-            content,
-            token,
-        }
-
-        return result
+        return dto
     }
 
-    InsertInputComment = (id_post: string, content: string, token: string): InsertInputCommentDTO => {
+    public updatePostInput(
+        id: unknown,
+        token: unknown,
+        content: unknown
+    ): UpdatePostInputDTO {
+        if (typeof id !== "string") {
+            throw new BadRequestError("'id' deve ser string")
+        }
 
         if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
+            throw new BadRequestError("'token' deve ser string")
+        }
+        if (typeof content !== "string") {
+            throw new BadRequestError("'content' deve ser string")
         }
 
-        if (content !== undefined) {
-            if (typeof content !== "string") {
-                throw new BadRequestError("'content' precisa ser uma string")
-            }
-        } else {
-            throw new BadRequestError("Favor, informar o 'content'")
-        }
-
-        const result: InsertInputCommentDTO = {
-            id_post,
-            content,
-            token,
-        }
-
-        return result
-    }
-
-    updateInputPost = (id: string, content: string, token: string): UpdateInputDTO => {
-
-        if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
-        }
-
-        if (content !== undefined) {
-            if (typeof content !== "string") {
-                throw new BadRequestError("'content' precisa ser uma string")
-            }
-        } else {
-            throw new BadRequestError("Favor, informar o 'content'")
-        }
-
-        const result: UpdateInputDTO = {
-            id,
-            content,
-            token,
-        }
-
-        return result
-    }
-
-    deleteInputPost = (id: string, token: string): DeleteInputPostDTO => {
-
-        if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
-        }
-
-        const result: DeleteInputPostDTO = {
+        const dto: UpdatePostInputDTO = {
             id,
             token,
+            content
         }
-
-        return result
+        return dto
     }
 
+    public updatePostOutput(post: Post): UpdatePostOutputDTO {
+        const dto: UpdatePostOutputDTO = {
+            message: "Post editado com sucesso",
+            content: post.getContent()
+        }
+        return dto
+    }
 
-
-    likeDislike = (id: string, like: number, token: string): LikeDislikeDTO => {
+    public deletePostInput(
+        id: unknown,
+        token: unknown
+    ): DeletePostInputDTO {
+        if (typeof id !== "string") {
+            throw new BadRequestError("'id' deve ser string")
+        }
 
         if (typeof token !== "string") {
-            throw new BadRequestError("'Token' não informado!")
+            throw new BadRequestError("'token' deve ser string")
         }
 
-        const result: LikeDislikeDTO = {
+        const dto: DeletePostInputDTO = {
             id,
-            like,
-            token,
+            token
         }
-
-        return result
+        return dto
     }
 
-} 
+    public deletePostOutput(): DeletePostOutputDTO {
+        const dto: DeletePostOutputDTO = {
+            message: "Post excluído com sucesso",
+        }
+        return dto
+    }
+
+    public likeDislikePostInput(
+        id: unknown,
+        token: unknown,
+        like: unknown
+    ): LikeDislikePostInputDTO {
+        if (typeof id !== "string") {
+            throw new BadRequestError("'id' deve ser string")
+        }
+
+        if (typeof token !== "string") {
+            throw new BadRequestError("'token' deve ser string")
+        }
+
+        if (typeof like !== "number") {
+            throw new BadRequestError("'like' deve ser boolean")
+        }
+
+        const dto: LikeDislikePostInputDTO = {
+            id,
+            token,
+            like
+        }
+        return dto
+    }
+
+    public likeDislikePostOutput(): LikeDislikePostOutputDTO {
+        const dto: LikeDislikePostOutputDTO = {
+            message: "Você interagiu no post"
+        }
+        return dto
+    }
+}
