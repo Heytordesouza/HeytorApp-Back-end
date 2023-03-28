@@ -49,33 +49,3 @@ CREATE TABLE likes_dislikes_comments(
     FOREIGN KEY(user_id) REFERENCES users(id)
     FOREIGN KEY (comment_id) REFERENCES comments(id)
 );
-
-DROP TABLE users;
-DROP TABLE posts;
-DROP TABLE comments;
-DROP TABLE likes_dislikes_posts;
-DROP TABLE likes_dislikes_comments;
-
-INSERT INTO users (id, name, email, password, role)
-VALUES ("u001", "Heytor", "heytor@email.com", "123654","ADMIN"),
-("u002", "Natália", "natalia@email.com", "123456","NORMAL");
-
-INSERT INTO posts (id, creator_id, content)
-VALUES ("p001", "u001", "Você quer visitar qual cidade do mundo?"),
-("p002", "u002", "Qual time você torce?"),
-("p003", "u002", "Melhor filme que já viu?");
-
-INSERT INTO comments(id, creator_id, content, post_id)
-VALUES("c001", "u002", "Tóquio", "p001"),
-("c002", "u001", "Flamengo", "p002"),
-("c003", "u001", "Interestelar", "p003");
-
-SELECT * FROM users;
-
-SELECT * FROM posts;
-
-SELECT * FROM comments;
-
-SELECT * FROM likes_dislikes_posts;
-
-SELECT * FROM likes_dislikes_comments;
