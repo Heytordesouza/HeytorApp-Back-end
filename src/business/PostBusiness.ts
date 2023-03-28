@@ -279,10 +279,6 @@ export class PostBusiness {
         const userId = payload.id
         const likeDB = like ? 1 : 0
 
-        if (likeDislikePostDB.creator_id === userId) {
-            throw new BadRequestError("Quem criou o post não pode dar 'like' ou 'dislike' no mesmo")
-        }
-
         const likeDislikeDB: LikesDislikesPostsDB = {
             user_id: userId,
             post_id: likeDislikePostDB.id,
