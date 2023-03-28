@@ -1,5 +1,5 @@
 import { CommentBusiness } from "../../src/business/CommentBusiness"
-import { CommentDTO, CreateCommentInputDTO } from "../../src/dtos/CommentDTO"
+import { CommentDTO, EditCommentInputDTO } from "../../src/dtos/CommentDTO"
 import { CommentDatabaseMock } from "../mocks/CommentDatabaseMock"
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock"
 import { TokenManagerMock } from "../mocks/TokenManagerMock"
@@ -7,24 +7,26 @@ import { BadRequestError } from "../../src/errors/BadRequestError"
 import { NotFoundError } from "../../src/errors/NotFoundError"
 import { PostDatabase } from "../../src/database/PostDatabase"
 
-describe("createComment", () => {
+describe("editComment", () => {
     const commentBusiness = new CommentBusiness(
         new CommentDTO(),
-        new PostDatabase(),
         new CommentDatabaseMock(),
+        new PostDatabase(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
 
     test("retornar erro caso o 'content' não seja preenchido", async () => {
         expect.assertions(2)
+
         try {
-            const input: CreateCommentInputDTO = {
-                id: "id-mock-post",
+            const input: EditCommentInputDTO = {
+                id: "id-mock-comment",
                 token: "token-mock-normal",
                 content: ""
             }
-            await commentBusiness.createComment(input)
+
+            await commentBusiness.editComment(input)
             
         } catch (error) {
             if(error instanceof BadRequestError){
@@ -38,12 +40,14 @@ describe("createComment", () => {
         expect.assertions(2)
 
         try {
-            const input: CreateCommentInputDTO = {
-                id: "id-mock-post",
+            const input: EditCommentInputDTO = {
+                id: "id-mock-comment",
                 token: "token-mock",
                 content: "Conteúdo do comentário"
             }
-            await commentBusiness.createComment(input)
+
+            await commentBusiness.editComment(input)
+
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'token' inválido")
@@ -52,44 +56,39 @@ describe("createComment", () => {
         }
     })
 
-    test("deve disparar erro caso 'postId' não seja encontrado", async () => { 
+    test("deve disparar erro caso 'id' não seja encontrado", async () => { 
         expect.assertions(2)
+
         try {
-            const input: CreateCommentInputDTO = {
+            const input: EditCommentInputDTO = {
                 id: "id",
                 token: "token-mock-normal",
                 content: "Conteúdo do comentário"
             }
-            await commentBusiness.createComment(input)
+
+            await commentBusiness.editComment(input)
+
         } catch (error) {
             if(error instanceof NotFoundError){
-                expect(error.message).toBe("'post' não encontrado")
+                expect(error.message).toBe("'id' não encontrado")
                 expect(error.statusCode).toBe(404)
             }
         }
     })
 
-    test("garantir que o comentário seja criado", async () => {
-        const input: CreateCommentInputDTO = {
-            id: "id-mock-post",
+    test("garantir que o comentário seja editado", async () => {
+
+        const input: EditCommentInputDTO = {
+            id: "id-mock-comment",
             token: "token-mock-normal",
             content: "Conteúdo do comentário"
         }
-        const response = await commentBusiness.createComment(input)
+        
+        const response = await commentBusiness.editComment(input)
 
         expect(response).toEqual({
-            message: "Comentário criado com sucesso",
-            comment: {
-                id: "id-mock",
-                postId: "id-mock-post",
-                content: "Conteúdo do comentário",
-                likes: 0,
-                dislikes: 0,
-                createdAt: expect.any(String),
-                updatedAt: expect.any(String),
-                creatorId: "id-mock",
-                creatorName: "Normal Mock"
-            }
+            message: "Comentário editado com sucesso",
+            content:  "Conteúdo do comentário"
         })
     })
 })

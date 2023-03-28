@@ -12,11 +12,11 @@ export class CommentController {
     public createComment = async (req: Request, res: Response) => {
         try {
         
-            const id = req.params.id
+            const postId = req.params.id
             const token = req.headers.authorization
             const content = req.body.content
 
-            const input = this.commentDTO.createCommentInput(id, token, content)
+            const input = this.commentDTO.createCommentInput(postId, token, content)
 
             const output = await this.commentBusiness.createComment(input)
 

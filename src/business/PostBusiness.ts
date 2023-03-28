@@ -12,8 +12,8 @@ import { NotFoundError } from "../errors/NotFoundError"
 export class PostBusiness {
     constructor(
         private postDTO: PostDTO,
-        private postDatabase: PostDatabase,
         private commentDatabase: CommentDatabase,
+        private postDatabase: PostDatabase,
         private idGenerator: IdGenerator,
         private tokenManager: TokenManager
     ){}
@@ -77,9 +77,9 @@ export class PostBusiness {
         const post = new Post(
             postDB.id,
             postDB.content,
+            postDB.comments,
             postDB.likes,
             postDB.dislikes,
-            postDB.comments,
             postDB.created_at,
             postDB.updated_at,
             postDB.creator_id,
@@ -88,23 +88,29 @@ export class PostBusiness {
 
         const commentsPost = await this.postDatabase.findComments(id)
 
-        if (!commentsPost) {
-            throw new NotFoundError("'id' não encontrado")
+        let output = []
+
+        if (commentsPost) {
+            const comments = new Comment(
+                commentsPost.id,
+                commentsPost.post_id,
+                commentsPost.content,
+                commentsPost.likes,
+                commentsPost.dislikes,
+                commentsPost.created_at,
+                commentsPost.updated_at,
+                commentsPost.creator_id,
+                commentsPost.creator_name
+            )
+
+            const returnn = this.postDTO.getPostECommentsByIdOutput(post, comments)
+            output.push(returnn)
+
+        } else {
+
+            const returnn = this.postDTO.getPostByIdOutput(post)
+            output.push(returnn)
         }
-
-        const comments = new Comment(
-            commentsPost.id,
-            commentsPost.post_id,
-            commentsPost.content,
-            commentsPost.likes,
-            commentsPost.dislikes,
-            commentsPost.created_at,
-            commentsPost.updated_at,
-            commentsPost.creator_id,
-            commentsPost.creator_name
-        )
-
-        const output = this.postDTO.getPostByIdOutput(post, comments)
 
         return output
     }
@@ -252,7 +258,7 @@ export class PostBusiness {
 
     public likeDislikePost = async (input: LikeDislikePostInputDTO)=>{
 
-        const { id, token, like } = input
+        const { id, like, token } = input
 
         if (token === undefined) {
             throw new BadRequestError("'token' ausente")
@@ -263,185 +269,70 @@ export class PostBusiness {
         if (payload === null){
             throw new BadRequestError("'Token' não válido!")
         }
+        
+        const likeDislikePostDB = await this.postDatabase.findPostWithCreatorId(id)
 
-        const filterPostToLike = await this.postDatabase.findPostWithCreatorId(id)
-        const filterCommentToLike = await this.postDatabase.findComments(id)
-        const filterIdLD = await this.postDatabase.likeDislike(payload.id, id)
-
-        if(filterIdLD){
-            throw new BadRequestError("Você já interagiu com esta publicação")
+        if (!likeDislikePostDB) {
+            throw new NotFoundError("'id' não encontrado")
         }
 
-        //Verifica pela Id se há uma publicação ou comentário
-        if(!filterPostToLike && !filterCommentToLike){
-            throw new BadRequestError("Publicação não encontrada")
+        const userId = payload.id
+        const likeDB = like ? 1 : 0
+
+        if (likeDislikePostDB.creator_id === userId) {
+            throw new BadRequestError("Quem criou o post não pode dar 'like' ou 'dislike' no mesmo")
         }
 
-        //Número de likes atualizado se tiver uma publicação
-        if(filterPostToLike){
-            let likes = filterPostToLike.likes
-            let dislikes = filterPostToLike.dislikes
-    
-            if(like === 0){
-                dislikes++
-            }else if(like === 1){
-                likes++
-            }else{
-                throw new BadRequestError("Informe um boolean. (true) para like ou (false) para dislike")
-            }
-    
-            const postToLike = new Post(
-                id,
-                filterPostToLike.content,
-                filterPostToLike.comments,
-                likes,
-                dislikes,
-                filterPostToLike.created_at,
-                filterPostToLike.updated_at,
-                filterPostToLike.creator_id,
-                filterPostToLike.creator_name,
-            )
-                    
-            const updateLikeDB = {
-                user_id: payload.id,
-                post_id: id,
-                like: 1
-            } 
-    
-            const postToLikeDB = postToLike.toDBModel()
-
-            await this.postDatabase.updatePost(postToLikeDB)
-            await this.postDatabase.updateLikeDislike(updateLikeDB)
-    
-            if(like === 0){
-                const output = {
-                    message: "'Dislike' feito com sucesso!", 
-                    }
-                return output
-            }else if(like === 1){
-                const output = {
-                    message: "'Like' feito com sucesso!", 
-                    }
-                return output
-            }
+        const likeDislikeDB: LikesDislikesPostsDB = {
+            user_id: userId,
+            post_id: likeDislikePostDB.id,
+            like: likeDB
         }
 
-        //Número de likes atualizado se tiver um comentário
-        if(filterCommentToLike){
+        const post = new Post(
+            likeDislikePostDB.id,
+            likeDislikePostDB.content,
+            likeDislikePostDB.comments,
+            likeDislikePostDB.likes,
+            likeDislikePostDB.dislikes,
+            likeDislikePostDB.created_at,
+            likeDislikePostDB.updated_at,
+            likeDislikePostDB.creator_id,
+            likeDislikePostDB.creator_name
+        )
 
-            let likes = 0
-            let dislikes = 0
+        const likeDislikeExists = await this.postDatabase.findLikeDislike(likeDislikeDB)
 
-            if(like === 0){
-                dislikes = 1          
-            } else if(like === 1){
-                likes = 1
-            } else{
-                throw new BadRequestError("Informe um boolean. (true) para like ou (false) para dislike")
+        if (likeDislikeExists === "already liked") {
+            if (like) {
+                await this.postDatabase.removeLikeDislike(likeDislikeDB)
+                post.removeLike()
+            } else {
+                await this.postDatabase.updateLikeDislike(likeDislikeDB)
+                post.removeLike() 
+                post.addDislike()
             }
-
-            const comments = 0
-
-            const commentToLike = new Post(
-                id,
-                filterCommentToLike.content,
-                comments,
-                likes,
-                dislikes,
-                filterCommentToLike.created_at,
-                filterCommentToLike.updated_at,
-                filterCommentToLike.creator_id,
-                filterCommentToLike.creator_name
-            )
-
-            const updateLikeDB = {
-                user_id: payload.id,
-                comment_id: id,
-                like: 1
-            } 
-
-            const commentToLikeDB = commentToLike.toDBModel()
-
-            await this.commentDatabase.updateComment(commentToLikeDB, id)
-            
-            await this.commentDatabase.updateLikeDislike(updateLikeDB)
-
-            if(like === 0){
-                const output = {
-                    message: "'Dislike' realizado com sucesso!", 
-                }
-                return output
-            } else if(like===1){
-                const output = {
-                    message: "'Like' realizado com sucesso!", 
-                }
-                return output
+        } else if (likeDislikeExists === "already disliked") {
+            if (like) {
+                await this.postDatabase.removeLikeDislike(likeDislikeDB)
+                post.removeDislike()
+                post.addLike()
+            } else {
+                await this.postDatabase.updateLikeDislike(likeDislikeDB)
+                post.removeDislike()
             }
+        } else {
+            await this.postDatabase.likeOrDislikePost(likeDislikeDB)
+
+            like ? post.addLike() : post.addDislike()
+
         }
 
-        // const likeDislikePostDB = await this.postDatabase.findPostWithCreatorId(id)
+        const updatedPostDB = post.toDBModel()
+        await this.postDatabase.updatePost(updatedPostDB)
 
-        // if (!likeDislikePostDB) {
-        //     throw new NotFoundError("'id' não encontrado")
-        // }
+        const output = this.postDTO.likeDislikePostOutput()
 
-        // const userId = payload.id
-        // const likeDB = like ? 1 : 0
-
-        // if (likeDislikePostDB.creator_id === userId) {
-        //     throw new BadRequestError("Quem criou o post não pode dar 'like' ou 'dislike' no mesmo")
-        // }
-
-        // const likeDislikeDB: LikesDislikesPostsDB = {
-        //     user_id: userId,
-        //     post_id: likeDislikePostDB.id,
-        //     like: likeDB
-        // }
-
-        // const post = new Post(
-        //     likeDislikePostDB.id,
-        //     likeDislikePostDB.content,
-        //     likeDislikePostDB.likes,
-        //     likeDislikePostDB.dislikes,
-        //     likeDislikePostDB.comments,
-        //     likeDislikePostDB.created_at,
-        //     likeDislikePostDB.updated_at,
-        //     likeDislikePostDB.creator_id,
-        //     likeDislikePostDB.creator_name
-        // )
-
-        // const likeDislikeExists = await this.postDatabase.findLikeDislike(likeDislikeDB)
-
-        // if (likeDislikeExists === "already liked") {
-        //     if (like) {
-        //         await this.postDatabase.removeLikeDislike(likeDislikeDB)
-        //         post.removeLike()
-        //     } else {
-        //         await this.postDatabase.updateLikeDislike(likeDislikeDB)
-        //         post.removeLike() 
-        //         post.addDislike()
-        //     }
-        // } else if (likeDislikeExists === "already disliked") {
-        //     if (like) {
-        //         await this.postDatabase.removeLikeDislike(likeDislikeDB)
-        //         post.removeDislike()
-        //         post.addLike()
-        //     } else {
-        //         await this.postDatabase.updateLikeDislike(likeDislikeDB)
-        //         post.removeDislike()
-        //     }
-        // } else {
-        //     await this.postDatabase.likeOrDislikePost(likeDislikeDB)
-
-        //     like ? post.addLike() : post.addDislike()
-
-        // }
-
-        // const updatedPostDB = post.toDBModel()
-        // await this.postDatabase.updatePost(updatedPostDB)
-
-        // const output = this.postDTO.likeDislikePostOutput()
-
-        // return output
-    }
+        return output
+    }   
 }

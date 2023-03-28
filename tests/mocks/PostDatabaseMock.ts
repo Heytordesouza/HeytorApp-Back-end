@@ -58,7 +58,7 @@ export class PostDatabaseMock extends BaseDatabase {
         }
     }
 
-    public async findPost(id: string): Promise<PostDB | undefined> {
+    public async findPost(id: string): Promise<PostWithCreatorDB | undefined> {
         if(id === "id-mock-post")
         return {
             id: "id-mock-post",
@@ -68,7 +68,8 @@ export class PostDatabaseMock extends BaseDatabase {
             dislikes: 0,
             comments: 0,
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            creator_name: "Normal Mock"
         }
     }
 
@@ -100,7 +101,7 @@ export class PostDatabaseMock extends BaseDatabase {
 
     }
 
-    public async likeDislike(likeDislike: LikesDislikesPostsDB):Promise<LikesDislikesPostsDB> {
+    public async likeDislike(userId: string, postId: string):Promise<LikesDislikesPostsDB | undefined> {
         const likeDislikeDB = {
             user_id: "id-mock-normal",
             post_id: "id-mock-post",

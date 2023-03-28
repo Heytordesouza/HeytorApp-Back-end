@@ -10,8 +10,8 @@ import { CommentDatabaseMock } from "../mocks/CommentDatabaseMock"
 describe("createPost", () => {
     const postBusiness = new PostBusiness(
         new PostDTO(),
-        new PostDatabaseMock(),
         new CommentDatabaseMock(),
+        new PostDatabaseMock(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
@@ -33,7 +33,7 @@ describe("createPost", () => {
         }
     })
 
-    test("deve disparar erro caso 'token' não seja válido", async () => { 
+    test("deve disparar erro caso o 'token' não seja válido", async () => { 
         expect.assertions(2)
 
         try {
@@ -41,7 +41,9 @@ describe("createPost", () => {
                 token: "token-mock",
                 content: "Conteúdo do post"
             }
+
             await postBusiness.insertNewPost(input)
+
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'Token' não válido!")
@@ -55,6 +57,7 @@ describe("createPost", () => {
             token: "token-mock-normal",
             content: "Conteúdo do post"
         }
+        
         const response = await postBusiness.insertNewPost(input)
 
         expect(response).toEqual({

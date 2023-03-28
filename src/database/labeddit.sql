@@ -42,8 +42,6 @@ CREATE TABLE likes_dislikes_posts(
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 
-DROP TABLE users;
-
 CREATE TABLE likes_dislikes_comments(
     user_id TEXT NOT NULL, 
     comment_id TEXT NOT NULL, 
@@ -51,6 +49,12 @@ CREATE TABLE likes_dislikes_comments(
     FOREIGN KEY(user_id) REFERENCES users(id)
     FOREIGN KEY (comment_id) REFERENCES comments(id)
 );
+
+DROP TABLE users;
+DROP TABLE posts;
+DROP TABLE comments;
+DROP TABLE likes_dislikes_posts;
+DROP TABLE likes_dislikes_comments;
 
 INSERT INTO users (id, name, email, password, role)
 VALUES ("u001", "Heytor", "heytor@email.com", "123654","ADMIN"),

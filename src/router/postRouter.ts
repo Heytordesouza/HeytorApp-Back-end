@@ -13,8 +13,8 @@ const postController = new PostController(
     new PostDTO(),
     new PostBusiness(
         new PostDTO(),
-        new PostDatabase(),
         new CommentDatabase(),
+        new PostDatabase(),
         new IdGenerator(),
         new TokenManager()      
     )

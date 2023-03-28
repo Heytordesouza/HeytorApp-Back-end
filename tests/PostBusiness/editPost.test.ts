@@ -1,18 +1,17 @@
 import { PostBusiness } from "../../src/business/PostBusiness"
 import { PostDTO } from "../../src/dtos/PostDTO"
-import { PostDatabaseMock } from "../mocks/PostDatabaseMock"
 import { IdGeneratorMock } from "../../tests/mocks/IdGeneratorMock"
 import { TokenManagerMock } from "../../tests/mocks/TokenManagerMock"
 import { UpdatePostInputDTO } from "../../src/dtos/PostDTO"
 import { BadRequestError } from "../../src/errors/BadRequestError"
-import { NotFoundError } from "../../src/errors/NotFoundError"
 import { CommentDatabaseMock } from "../mocks/CommentDatabaseMock"
+import { PostDatabaseMock } from "../mocks/PostDatabaseMock"
 
 describe("editPost", () => {
     const postBusiness = new PostBusiness(
         new PostDTO(),
-        new PostDatabaseMock(),
         new CommentDatabaseMock(),
+        new PostDatabaseMock(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
@@ -25,6 +24,7 @@ describe("editPost", () => {
                 token: "token-mock-normal",
                 content: ""
             }
+
             await postBusiness.updatePost(input)
             
         } catch (error) {
@@ -35,7 +35,7 @@ describe("editPost", () => {
         }
     })
 
-    test("deve disparar erro caso 'token' não seja válido", async () => { 
+    test("deve disparar erro caso o 'token' não seja válido", async () => { 
         expect.assertions(2)
 
         try {
@@ -44,7 +44,9 @@ describe("editPost", () => {
                 token: "token-mock",
                 content: "Conteúdo do post"
             }
+
             await postBusiness.updatePost(input)
+
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'Token' não válido!")
@@ -61,7 +63,9 @@ describe("editPost", () => {
                 token: "token-mock-normal",
                 content: "Conteúdo do post"
             }
+
             await postBusiness.updatePost(input)
+
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'id' não encontrado")
@@ -76,6 +80,7 @@ describe("editPost", () => {
             token: "token-mock-normal",
             content: "Conteúdo do post"
         }
+        
         const response = await postBusiness.updatePost(input)
 
         expect(response).toEqual({
