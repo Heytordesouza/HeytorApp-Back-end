@@ -5,7 +5,7 @@ import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Comment } from "../models/Comment"
 import { Post } from "../models/Post"
-import { IdGenerator } from "../services/IdGenerator"
+import { IdGenerator } from "../services/idGenerator"
 import { TokenManager } from "../services/TokenManager"
 import { LikeDislikeCommentDB, USER_ROLES } from "../types"
 
