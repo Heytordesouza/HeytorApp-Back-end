@@ -4,7 +4,7 @@ import { UserController } from "../controller/UserController"
 import { UserDatabase } from "../database/UserDatabase"
 import { UserDTO } from "../dtos/UserDTO"
 import { HashManager } from "../services/HashManager"
-import { IdGenerator } from "../services/IdGenerator"
+import { IdGenerator } from "../services/idGenerator"
 import { TokenManager } from "../services/TokenManager"
 
 export const userRouter = express.Router()

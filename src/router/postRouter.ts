@@ -4,7 +4,7 @@ import { PostController } from "../controller/PostController";
 import { CommentDatabase } from "../database/CommentDatabase";
 import { PostDatabase } from "../database/PostDatabase";
 import { PostDTO } from "../dtos/PostDTO";
-import { IdGenerator } from "../services/IdGenerator";
+import { IdGenerator } from "../services/idGenerator";
 import { TokenManager } from "../services/TokenManager";
 
 export const postRouter = express.Router()
