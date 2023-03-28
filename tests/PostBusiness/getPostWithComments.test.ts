@@ -1,18 +1,17 @@
 import { PostBusiness } from "../../src/business/PostBusiness"
 import { PostDTO } from "../../src/dtos/PostDTO"
-import { PostDatabaseMock } from "../mocks/PostDatabaseMock"
 import { IdGeneratorMock } from "../../tests/mocks/IdGeneratorMock"
 import { TokenManagerMock } from "../../tests/mocks/TokenManagerMock"
 import { GetPostByIdInputDTO } from "../../src/dtos/PostDTO"
-import { NotFoundError } from "../../src/errors/NotFoundError"
 import { BadRequestError } from "../../src/errors/BadRequestError"
 import { CommentDatabaseMock } from "../mocks/CommentDatabaseMock"
+import { PostDatabaseMock } from "../mocks/PostDatabaseMock"
 
 describe("getPostWithComments", () => {
     const postBusiness = new PostBusiness(
         new PostDTO(),
-        new PostDatabaseMock(),
         new CommentDatabaseMock(),
+        new PostDatabaseMock(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
@@ -57,7 +56,7 @@ describe("getPostWithComments", () => {
         }
 
         const response = await postBusiness.getPostsById(input)
-        expect(response).toEqual({
+        expect(response).toEqual([{
             id: "id-mock-post",
             content: "Conteúdo do post",
             likes: 0,
@@ -82,6 +81,6 @@ describe("getPostWithComments", () => {
                     name: "Normal Mock"
                 }
             }]
-        })
+        }])
     })
 })

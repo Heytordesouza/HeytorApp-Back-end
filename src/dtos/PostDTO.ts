@@ -11,10 +11,10 @@ export type GetPostOuputDTO = PostModel[]
 
 export interface GetPostByIdInputDTO {
     id: string,
-    token: string | undefined
+    token: string 
 }
 
-export type GetPostByIdOuputDTO = {
+export type GetPostECommentsByIdOuputDTO = {
     id: string,
     content: string,
     likes: number,
@@ -41,8 +41,38 @@ export type GetPostByIdOuputDTO = {
     }]
 }
 
+export type GetCommentOuputDTO = {
+    comment: [{
+        id: string,
+        postId: string,
+        content: string,
+        likes: number,
+        dislikes: number,
+        createdAt: string,
+        updatedAt: string,
+        creator: {
+            id: string,
+            name: string
+        }
+    }]
+}
+
+export type GetPostByIdOuputDTO = {
+    id: string,
+    content: string,
+    likes: number,
+    dislikes: number,
+    comments: number,
+    createdAt: string,
+    updatedAt: string,
+    creator: {
+        id: string,
+        name: string
+    }
+}
+
 export interface CreatePostInputDTO {
-    token: string | undefined,
+    token: string,
     content: string
 }
 
@@ -63,7 +93,7 @@ export interface CreatePostOutputDTO {
 
 export interface UpdatePostInputDTO {
     id: string,
-    token: string | undefined,
+    token: string,
     content: string
 }
 
@@ -74,7 +104,7 @@ export interface UpdatePostOutputDTO {
 
 export interface DeletePostInputDTO {
     id: string,
-    token: string | undefined
+    token: string
 }
 
 export interface DeletePostOutputDTO {
@@ -83,7 +113,7 @@ export interface DeletePostOutputDTO {
 
 export interface LikeDislikePostInputDTO {
     id: string,
-    token: string | undefined
+    token: string,
     like: number
 }
 
@@ -93,7 +123,7 @@ export interface LikeDislikePostOutputDTO {
 
 export class PostDTO {
     public getPostInput(
-        token: unknown
+        token: string
     ): GetPostInputDTO {
 
         if (typeof token !== "string") {
@@ -108,8 +138,8 @@ export class PostDTO {
     }
 
     public getPostByIdInput(
-        id: unknown,
-        token: undefined
+        id: string,
+        token: string
     ): GetPostByIdInputDTO {
         if (typeof id !== "string") {
             throw new BadRequestError("'id' deve ser string")
@@ -127,8 +157,8 @@ export class PostDTO {
         return dto
     }
 
-    public getPostByIdOutput(post: Post, comment: Comment): GetPostByIdOuputDTO {
-        const dto: GetPostByIdOuputDTO = {
+    public getPostECommentsByIdOutput(post: Post, comment: Comment): GetPostECommentsByIdOuputDTO {
+        const dto: GetPostECommentsByIdOuputDTO = {
             id: post.getId(),
             content: post.getContent(),
             likes: post.getLikes(),
@@ -153,6 +183,23 @@ export class PostDTO {
                     name: comment.getCreatorName()
                 }
             }]
+        }
+        return dto
+    }
+
+    public getPostByIdOutput(post: Post): GetPostByIdOuputDTO {
+        const dto: GetPostByIdOuputDTO = {
+            id: post.getId(),
+            content: post.getContent(),
+            likes: post.getLikes(),
+            dislikes: post.getDislikes(),
+            comments: post.getComments(),
+            createdAt: post.getCreatedAt(),
+            updatedAt: post.getUpdatedAt(),
+            creator: {
+                id: post.getCreatorId(),
+                name: post.getCreatorName()
+            },
         }
         return dto
     }
@@ -253,21 +300,21 @@ export class PostDTO {
     }
 
     public likeDislikePostInput(
-        id: unknown,
-        token: unknown,
-        like: unknown
+        id: string,
+        token: string,
+        like: number
     ): LikeDislikePostInputDTO {
-        if (typeof id !== "string") {
-            throw new BadRequestError("'id' deve ser string")
-        }
+        // if (typeof id !== "string") {
+        //     throw new BadRequestError("'id' deve ser string")
+        // }
 
         if (typeof token !== "string") {
             throw new BadRequestError("'token' deve ser string")
         }
 
-        if (typeof like !== "number") {
-            throw new BadRequestError("'like' deve ser boolean")
-        }
+        // if (typeof like !== "number") {
+        //     throw new BadRequestError("'like' deve ser 1 ou 0")
+        // }
 
         const dto: LikeDislikePostInputDTO = {
             id,

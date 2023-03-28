@@ -2,7 +2,7 @@ import { BadRequestError } from "../errors/BadRequestError"
 import { Comment } from "../models/Comment"
 
 export interface CreateCommentInputDTO {
-    id: string
+    postId: string
     token: string | undefined,
     content: string
 }
@@ -45,7 +45,7 @@ export interface DeleteCommentOutputDTO {
 export interface LikeDislikeCommentInputDTO {
     id: string,
     token: string | undefined
-    like: boolean
+    like: number
 }
 
 export interface LikeDislikeCommentOutputDTO {
@@ -55,13 +55,13 @@ export interface LikeDislikeCommentOutputDTO {
 export class CommentDTO {
     
     public createCommentInput(
-        id: unknown,
+        postId: unknown,
         token: unknown,
         content: unknown
         
     ): CreateCommentInputDTO {
 
-        if (typeof id !== "string") {
+        if (typeof postId !== "string") {
             throw new BadRequestError("'id' deve ser string")
         }
         if (typeof token !== "string") {
@@ -72,7 +72,7 @@ export class CommentDTO {
         }
 
         const dto: CreateCommentInputDTO = {
-            id,
+            postId,
             token,
             content
         }
@@ -168,7 +168,7 @@ export class CommentDTO {
             throw new BadRequestError("'token' deve ser string")
         }
 
-        if (typeof like !== "boolean") {
+        if (typeof like !== "number") {
             throw new BadRequestError("'like' deve ser boolean")
         }
 

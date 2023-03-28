@@ -10,8 +10,8 @@ import { PostDatabase } from "../../src/database/PostDatabase"
 describe("likeDislikeComment", () => {
     const commentBusiness = new CommentBusiness(
         new CommentDTO(),
-        new PostDatabase(),
         new CommentDatabaseMock(),
+        new PostDatabase(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
@@ -23,9 +23,11 @@ describe("likeDislikeComment", () => {
             const input: LikeDislikeCommentInputDTO = {
                 id: "id-mock-post",
                 token: "token-mock",
-                like: true
+                like: 1
             }
+
             await commentBusiness.likeDislikeComment(input)
+            
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'token' inválido")
@@ -36,13 +38,16 @@ describe("likeDislikeComment", () => {
 
     test("deve disparar erro caso 'id' não seja encontrado", async () => { 
         expect.assertions(2)
+
         try {
             const input: LikeDislikeCommentInputDTO = {
                 id: "id",
                 token: "token-mock-normal",
-                like: true
+                like: 1
             }
+
             await commentBusiness.likeDislikeComment(input)
+
         } catch (error) {
             if(error instanceof NotFoundError){
                 expect(error.message).toBe("'id' não encontrado")
@@ -52,10 +57,11 @@ describe("likeDislikeComment", () => {
     })
 
     test("garantir que o comentário receba 'like' ou 'dislike'", async () => {
+
         const input: LikeDislikeCommentInputDTO = {
             id: "id-mock-comment",
             token: "token-mock-admin",
-            like: true
+            like: 1
         }
 
         const response = await commentBusiness.likeDislikeComment(input)

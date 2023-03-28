@@ -70,11 +70,11 @@ export class PostDatabase extends BaseDatabase{
 
     }
 
-    public async findPost(id: string): Promise<PostDB | undefined> {
-        const [postDB]: PostDB[] | undefined = await BaseDatabase
+    public async findPost(id: string): Promise<PostWithCreatorDB | undefined> {
+        const [postDB]: PostWithCreatorDB[] | undefined = await BaseDatabase
             .connection(PostDatabase.POSTS_TABLE)
             .select()
-            .where({ id })
+            .where({ id:id })
 
         return postDB
     }
@@ -123,11 +123,11 @@ export class PostDatabase extends BaseDatabase{
         return result[0]
     }
 
-    public likeDislike = async(user_id:string, post_id: string):Promise<LikesDislikesPostsDB | undefined>=>{
+    public likeDislike = async(userId: string, postId: string):Promise<LikesDislikesPostsDB | undefined>=>{
         const [likeDislikeDB]:LikesDislikesPostsDB[] | undefined = await BaseDatabase
        .connection(PostDatabase.LIKEDISLIKE_TABLE)
        .select()
-       .where({user_id, post_id})
+       .where({user_id: userId, post_id: postId})
 
        return likeDislikeDB
    }
@@ -169,5 +169,4 @@ export class PostDatabase extends BaseDatabase{
                 post_id: likeDislike.post_id
             })
     }
-
 }

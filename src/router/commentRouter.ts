@@ -13,8 +13,8 @@ const commentController = new CommentController(
     new CommentDTO(), 
     new CommentBusiness(
         new CommentDTO(), 
-        new PostDatabase(),
         new CommentDatabase(), 
+        new PostDatabase(),
         new IdGenerator(), 
         new TokenManager()
     )

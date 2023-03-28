@@ -1,12 +1,6 @@
 import { CommentDatabase } from "../database/CommentDatabase"
 import { PostDatabase } from "../database/PostDatabase"
-import { 
-    CommentDTO, 
-    CreateCommentInputDTO, 
-    DeleteCommentInputDTO, 
-    EditCommentInputDTO, 
-    LikeDislikeCommentInputDTO 
-} from "../dtos/CommentDTO"
+import { CommentDTO, CreateCommentInputDTO, DeleteCommentInputDTO, EditCommentInputDTO, LikeDislikeCommentInputDTO } from "../dtos/CommentDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Comment } from "../models/Comment"
@@ -18,14 +12,14 @@ import { LikeDislikeCommentDB, USER_ROLES } from "../types"
 export class CommentBusiness {
     constructor(
         private commentDTO: CommentDTO,
-        private postDatabase: PostDatabase,
         private commentDatabase: CommentDatabase,
+        private postDatabase: PostDatabase,
         private idGenerator: IdGenerator,
         private tokenManager: TokenManager
-    ) { }
+    ) {}
 
     public createComment = async (input: CreateCommentInputDTO) => {
-        const { id, token, content } = input
+        const { postId, token, content } = input
 
         if (token === undefined) {
             throw new BadRequestError("'token' ausente")
@@ -41,7 +35,7 @@ export class CommentBusiness {
             throw new BadRequestError("'token' inválido")
         }
 
-        const post = await this.commentDatabase.findPost(id)
+        const post = await this.commentDatabase.findPost(postId)
 
         if (!post) {
             throw new NotFoundError("'post' não encontrado")
@@ -53,7 +47,7 @@ export class CommentBusiness {
 
         const newComment = new Comment(
             commentId,
-            id,
+            postId,
             content,
             0,
             0,
@@ -70,9 +64,9 @@ export class CommentBusiness {
         const updateCommentCount = new Post(
             post.id,
             post.content,
+            post.comments,
             post.likes,
             post.dislikes,
-            post.comments,
             post.created_at,
             post.updated_at,
             post.creator_id,
@@ -173,6 +167,26 @@ export class CommentBusiness {
             throw new BadRequestError("usuário não autorizado a deletar este post")
         }
 
+        const post = await this.commentDatabase.findPost(commentToDeleteDB.post_id)
+
+        if(post){
+            const updateCommentCount = new Post(
+                post.id,
+                post.content,
+                post.comments,
+                post.likes,
+                post.dislikes,
+                post.created_at,
+                post.updated_at,
+                post.creator_id,
+                post.creator_name
+            )
+
+            updateCommentCount.removeCommentsPosts()
+            const updatedPostDB = updateCommentCount.toDBModel()
+            await this.postDatabase.updatePost(updatedPostDB)
+        }
+        
         await this.commentDatabase.deleteComment(id)
 
         const output = this.commentDTO.deleteCommentOutput()
@@ -201,10 +215,6 @@ export class CommentBusiness {
 
         const userId = tokenPayload.id
         const likeDB = like ? 1 : 0
-
-        if (likeDislikeCommentDB.creator_id === userId) {
-            throw new BadRequestError("Quem criou o post não pode dar 'like' ou 'dislike' no mesmo")
-        }
 
         const likeDislikeDB: LikeDislikeCommentDB = {
             user_id: userId,

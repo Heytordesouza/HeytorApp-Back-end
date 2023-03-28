@@ -13,14 +13,14 @@ export class CommentDatabase extends BaseDatabase {
     }
 
     public async findPost(id: string): Promise<PostWithCreatorDB | undefined> {
-        const [postDB]: PostWithCreatorDB[] | undefined = await BaseDatabase
+        const [postDB]: PostWithCreatorDB[] = await BaseDatabase
             .connection(CommentDatabase.TABLE_POSTS)
             .where({ id: id })
         return postDB
     }
 
     public async findComment(id: string): Promise<CommentDB | undefined> {
-        const [commentDB]: CommentDB[] | undefined = await BaseDatabase
+        const [commentDB]: CommentDB[] = await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
             .where({ id: id })
         return commentDB
@@ -44,12 +44,12 @@ export class CommentDatabase extends BaseDatabase {
         await BaseDatabase
             .connection(CommentDatabase.TABLE_LIKES_DISLIKES_COMMENTS)
             .delete()
-            .where({ comments_id: id })
+            .where({ comment_id: id })
 
         await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
             .delete()
-            .where({ id: id })
+            .where({ id })
     }
 
     public async findCommentWithCreatorId(id: string): Promise<CommentWithCreatorDB | undefined> {
@@ -64,7 +64,7 @@ export class CommentDatabase extends BaseDatabase {
                 "comments.created_at",
                 "comments.updated_at",
                 "comments.creator_id",
-                "users.nickname AS creator_nickname"
+                "users.name AS creator_name"
             )
             .join("users", "comments.creator_id", "=", "users.id")
             .where("comments.id", id)
@@ -83,7 +83,7 @@ export class CommentDatabase extends BaseDatabase {
             .select()
             .where({
                 user_id: likeDislike.user_id,
-                comments_id: likeDislike.comment_id
+                comment_id: likeDislike.comment_id
             })
         if (likeDislikeDB) {
             return likeDislikeDB.like === 1 ? "already liked" : "already disliked"
@@ -97,7 +97,7 @@ export class CommentDatabase extends BaseDatabase {
             .delete()
             .where({
                 user_id: likeDislike.user_id,
-                comments_id: likeDislike.comment_id
+                comment_id: likeDislike.comment_id
             })
     }
 
@@ -106,7 +106,7 @@ export class CommentDatabase extends BaseDatabase {
             .update(likeDislike)
             .where({
                 user_id: likeDislike.user_id,
-                comments_id: likeDislike.comment_id
+                comment_id: likeDislike.comment_id
             })
     }
 }

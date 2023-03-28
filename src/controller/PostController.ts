@@ -12,8 +12,8 @@ export class PostController{
     public getPosts = async(req:Request, res:Response)=>{
         try {
             
-            const input ={
-                token: req.headers.authorization
+            const input = {
+                token: req.headers.authorization as string
             }  
             
             const output = await this.postBusiness.getPosts(input)
@@ -36,7 +36,7 @@ export class PostController{
 
             const input = {
                 id:req.params.id,
-                token: req.headers.authorization
+                token: req.headers.authorization as string
             }  
             
             const output = await this.postBusiness.getPostsById(input)
@@ -127,11 +127,11 @@ export class PostController{
     public likeDislikePost = async (req:Request, res: Response)=>{
         try {
 
-            const id = req.params.id
-            const token = req.headers.authorization
-            const like = req.body.like
-            
-            const input = this.postDTO.likeDislikePostInput(id, token, like)
+            const input = {
+                id: req.params.id,
+                like: req.body.like,
+                token: req.headers.authorization as string,
+            }
 
             const output = await this.postBusiness.likeDislikePost(input)
 

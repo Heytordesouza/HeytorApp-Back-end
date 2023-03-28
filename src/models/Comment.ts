@@ -11,7 +11,7 @@ export class Comment {
         private updatedAt: string,
         private creatorId: string,
         private creatorName: string
-    ) {}
+    ) {[]}
 
     public getId() : string {
         return this.id

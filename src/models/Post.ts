@@ -70,6 +70,10 @@ export class Post {
         this.comments +=1
     }
 
+    public removeCommentsPosts() {
+        this.comments -=1
+    }
+
     public getLikes():number{
         return this.likes
     }
@@ -133,5 +137,4 @@ export class Post {
     public setCreatorName(value:string):void{
         this.creatorName = value
     }
-
 }

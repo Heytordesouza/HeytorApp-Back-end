@@ -10,13 +10,13 @@ import { PostDatabase } from "../../src/database/PostDatabase"
 describe("deleteComment", () => {
     const commentBusiness = new CommentBusiness(
         new CommentDTO(),
-        new PostDatabase(),
         new CommentDatabaseMock(),
+        new PostDatabase(),
         new IdGeneratorMock(),
         new TokenManagerMock()
     )
 
-    test("deve disparar erro caso 'token' não seja válido", async () => { 
+    test("deve disparar erro caso o 'token' não seja válido", async () => { 
         expect.assertions(2)
 
         try {
@@ -24,7 +24,9 @@ describe("deleteComment", () => {
                 id: "id-mock-post",
                 token: "token-mock"
             }
+
             await commentBusiness.deleteComment(input)
+
         } catch (error) {
             if(error instanceof BadRequestError){
                 expect(error.message).toBe("'token' inválido")
@@ -33,14 +35,17 @@ describe("deleteComment", () => {
         }
     })
     
-    test("deve disparar erro caso 'id' não seja encontrado", async () => { 
+    test("deve disparar erro caso o 'id' não seja encontrado", async () => { 
         expect.assertions(2)
+
         try {
             const input: DeleteCommentInputDTO = {
                 id: "id",
                 token: "token-mock-normal"
             }
+
             await commentBusiness.deleteComment(input)
+
         } catch (error) {
             if(error instanceof NotFoundError){
                 expect(error.message).toBe("'id' não encontrado")
@@ -50,10 +55,12 @@ describe("deleteComment", () => {
     })
 
     test("garantir que o comentário seja deletado", async () => {
+        
         const input: DeleteCommentInputDTO = {
             id: "id-mock-comment",
             token: "token-mock-normal"
         }
+
         const response = await commentBusiness.deleteComment(input)
 
         expect(response).toEqual({
