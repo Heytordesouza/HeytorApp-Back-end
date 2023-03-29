@@ -7,6 +7,7 @@
 * [Endpoints](#endpoints)
 * [Dependências](#dependências)
 * [Rodando o projeto](#rodando-o-projeto)
+* [Banco de dados](#banco-de-dados)
 * [Link da Documentação](#link-da-documentação)
 
 # Introdução 
@@ -411,7 +412,11 @@ $ npm run dev
 
 # O servidor iniciará na porta:3003> 
 ```
+# Banco de dados
+
 ![Labeddit (1)](https://raw.githubusercontent.com/Heytordesouza/Labeddit-Backend/main/dbdiagram.png)
+
+https://dbdiagram.io/d/642490005758ac5f17253b20
 
 # Link da Documentação
 
