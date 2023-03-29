@@ -46,7 +46,7 @@ O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a inte
 - [x]  Like Dislike Comment
 
 
-### :dart: LOGIN USER - Endpoint público utilizado para fazer login. Devolve um token jwt.
+### :dart: LOGIN USER - Login de usuário já cadastrado. Endpoint público utilizado para fazer login. Devolve um token jwt.
 
 ```
 // request POST /users/login
@@ -63,7 +63,7 @@ O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a inte
 }
 ```
 
-### :dart: CREATE USER - Endpoint público para fazer um cadastro. Devolve um token jwt.
+### :dart: CREATE USER - Criação de usuário. Endpoint público para fazer um cadastro. Devolve um token jwt.
 
 ```
 // request POST /users/signup
@@ -210,7 +210,7 @@ O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a inte
 // headers.authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjYjU2NzAwLWRjMGEtNDU3YS04MWI1LTZ"
 
 // response
-// status 200 CREATED
+// status 200 OK
 {
   "message": "Post excluído com sucesso"
 }
@@ -309,7 +309,7 @@ Segunda funcionalidade - Dislike
 // headers.authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjYjU2NzAwLWRjMGEtNDU3YS04MWI1LTZ"
 
 // response
-// status 200 CREATED
+// status 200 OK
 {
   "message": "Comentário excluído com sucesso"
 }
@@ -395,13 +395,11 @@ Segunda funcionalidade - Dislike
 
 # Rodando o projeto 
 
-Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
-[Git](https://git-scm.com), o [Node.js](https://nodejs.org/en/) e o [Postman](https://www.postman.com). 
-Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
-
+Você vai precisar ter instalado em sua máquina as seguintes ferramentas:
+[Git](https://git-scm.com), o [Node.js](https://nodejs.org/en/), o [Postman](https://www.postman.com) e um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 ```
 # Clone este repositório
-$ git clone <https://github.com/endioliveira/projeto-labeddit-back>
+$ git clone (https://github.com/Heytordesouza/Labeddit-Backend.git)
 
 # Acesse a pasta do projeto no terminal
 $ cd projeto-labeddit-back
@@ -414,10 +412,6 @@ $ npm run dev
 
 # O servidor iniciará na porta:3003> 
 ```
-Você vai precisar ter instalado em sua máquina as seguintes ferramentas:
-[Git], o [Node.js], [Postman] e o [VSCode].
-
-# Tecnologias Utilizadas 
 
 # Link da Documentação
 
