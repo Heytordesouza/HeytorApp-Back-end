@@ -411,6 +411,7 @@ $ npm run dev
 
 # O servidor iniciará na porta:3003> 
 ```
+![Labeddit (1)](https://raw.githubusercontent.com/Heytordesouza/Labeddit-Backend/main/dbdiagram.png)
 
 # Link da Documentação
 
