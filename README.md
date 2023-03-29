@@ -7,7 +7,6 @@
 * [Endpoints](#endpoints)
 * [Dependências](#dependências)
 * [Rodando o projeto](#rodando-o-projeto)
-* [Tecnologias utilizadas](#tecnologias-utilizadas)
 * [Link da Documentação](#link-da-documentação)
 
 # Introdução 
