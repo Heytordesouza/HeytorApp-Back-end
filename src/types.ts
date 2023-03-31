@@ -130,10 +130,6 @@ export interface CommentDB {
     updated_at: string
 }
   
-export interface CommentWithCreatorDB extends CommentDB {
-    creator_name: string 
-}
-
 export interface LikeDislikeDB{
     user_id: string,
     post_id: string,

@@ -1,7 +1,7 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Post } from "../models/Post"
 import { Comment } from "../models/Comment"
-import { PostModel } from "../types"
+import { CommentModel, PostModel } from "../types"
 
 export interface GetPostInputDTO {
     token: string | undefined
@@ -40,6 +40,13 @@ export type GetPostECommentsByIdOuputDTO = {
         }
     }]
 }
+
+export interface GetCommentsByPostIdInput {
+    postId: string,
+    token: string | undefined
+}
+
+export type GetCommentsByPostOutput = CommentModel[]
 
 export type GetCommentOuputDTO = {
     comment: [{

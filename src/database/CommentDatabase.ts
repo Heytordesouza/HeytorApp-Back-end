@@ -19,13 +19,26 @@ export class CommentDatabase extends BaseDatabase {
         return postDB
     }
 
-    public async findComment(id: string): Promise<CommentDB | undefined> {
+    public async findComment(postId: string): Promise<CommentDB | undefined> {
         const [commentDB]: CommentDB[] = await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
-            .where({ id: id })
+            .select("*")
+            .where({ post_id: postId })
+
         return commentDB
     }
 
+    public getIdPostByCommentId = async (id: string):Promise<CommentDB| undefined> => {
+        const [result] = await BaseDatabase
+            .connection(CommentDatabase.TABLE_COMMENTS)
+            .select(
+                "comments.post_id"
+            )
+            .where({ id })
+    
+        return result
+    }
+    
     public async updateCommentsInPosts(id:string, post: PostDB): Promise<void>{
         await BaseDatabase
             .connection(CommentDatabase.TABLE_POSTS)
@@ -33,11 +46,11 @@ export class CommentDatabase extends BaseDatabase {
             .where({id: id})
     }
 
-    public async updateComment(commentDB: CommentsDB,id:string): Promise<void> {
+    public async updateComment(commentDB: CommentsDB): Promise<void> {
         await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
             .update(commentDB)
-            .where({ id:id })
+            .where({ id: commentDB.id })
     }
 
     public async deleteComment(id: string): Promise<void> {
@@ -52,7 +65,28 @@ export class CommentDatabase extends BaseDatabase {
             .where({ id })
     }
 
-    public async findCommentWithCreatorId(id: string): Promise<CommentWithCreatorDB | undefined> {
+    public getCommentWithCreatorByPostId = async (post_id: string) => {
+        const result: CommentWithCreatorDB[] | undefined = await BaseDatabase.connection(
+          CommentDatabase.TABLE_COMMENTS
+        )
+          .select([
+            "comments.id",
+            "comments.post_id",
+            "comments.content",
+            "comments.likes",
+            "comments.dislikes",
+            "comments.created_at",
+            "comments.updated_at",
+            "comments.creator_id",
+            "users.name AS creator_name"
+          ])
+          .join("users", "comments.creator_id", "=", "users.id")
+          .where({ post_id });
+    
+        return result;
+    };
+
+    public async findCommentWithCreatorId(postId: string): Promise<CommentWithCreatorDB | undefined> {
         const result: CommentWithCreatorDB[] | undefined = await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
             .select(
@@ -67,7 +101,7 @@ export class CommentDatabase extends BaseDatabase {
                 "users.name AS creator_name"
             )
             .join("users", "comments.creator_id", "=", "users.id")
-            .where("comments.id", id)
+            .where( "comments.id", postId )
 
         return result[0]
     }
