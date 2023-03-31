@@ -23,6 +23,22 @@ export class CommentDatabaseMock extends BaseDatabase {
             }
     }
 
+    public async getIdPostByCommentId(id: string):Promise<CommentDB| undefined> {
+        if (id === "id-mock-comment") {
+            return {
+                id: "id-mock-comment",
+                post_id: "id-mock-post",
+                content: "Conteúdo do comentário",
+                likes: 0,
+                dislikes: 0,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                creator_id: "id-mock"
+            }
+        }
+    }
+
+
     public async findComment(id: string): Promise<CommentDB | undefined> {
         if (id === "id-mock-comment") {
             return {
@@ -43,6 +59,22 @@ export class CommentDatabaseMock extends BaseDatabase {
     public async updateComment(commentDB: CommentDB): Promise<void> { }
 
     public async deleteComment(id: string): Promise<void> { }
+
+    public async getCommentWithCreatorByPostId(post_id: string): Promise<any> {
+        if (post_id === "id-mock-comment") {
+            return {
+                id: "id-mock-comment",
+                post_id: "id-mock-post",
+                content: "Conteúdo do comentário",
+                likes: 0,
+                dislikes: 0,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                creator_id: "id-mock-normal",
+                creator_name: "Normal Mock" 
+            }
+        }
+    }
 
     public async findCommentWithCreatorId(id: string): Promise<CommentWithCreatorDB | undefined> {
         if (id === "id-mock-comment") {

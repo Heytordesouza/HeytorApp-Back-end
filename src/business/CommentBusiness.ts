@@ -1,13 +1,14 @@
 import { CommentDatabase } from "../database/CommentDatabase"
 import { PostDatabase } from "../database/PostDatabase"
 import { CommentDTO, CreateCommentInputDTO, DeleteCommentInputDTO, EditCommentInputDTO, LikeDislikeCommentInputDTO } from "../dtos/CommentDTO"
+import { GetCommentsByPostIdInput, GetCommentsByPostOutput } from "../dtos/PostDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Comment } from "../models/Comment"
 import { Post } from "../models/Post"
 import { IdGenerator } from "../services/idGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { LikeDislikeCommentDB, USER_ROLES } from "../types"
+import { CommentWithCreatorDB, LikeDislikeCommentDB, USER_ROLES } from "../types"
 
 export class CommentBusiness {
     constructor(
@@ -18,6 +19,52 @@ export class CommentBusiness {
         private tokenManager: TokenManager
     ) {}
 
+    public getComments = async (input: GetCommentsByPostIdInput): Promise<GetCommentsByPostOutput | undefined> => {
+        const { postId, token } = input
+    
+        if (token === undefined) {
+            throw new BadRequestError("token ausente")
+        }
+    
+        const payload = this.tokenManager.getPayload(token)
+    
+        if (payload === null) {
+            throw new BadRequestError("token inválido")
+        }
+    
+        if (typeof postId !== "string") {
+            throw new BadRequestError("'postId' deve ser string")
+        }
+    
+        const postDB = await this.postDatabase.findPost(postId)
+    
+        if (!postDB) {
+            throw new BadRequestError("Post não encontrado")
+        }
+    
+        // const commentsDB = await this.commentDatabase.findComment(postDB.id)
+    
+        const commentsWithCreatorDB = await this.commentDatabase.getCommentWithCreatorByPostId(postId)
+    
+        const comments = commentsWithCreatorDB.map((commentDB) => {
+            const comment = new Comment(
+                commentDB.id,
+                commentDB.post_id,
+                commentDB.content,
+                commentDB.likes,
+                commentDB.dislikes,
+                commentDB.created_at,
+                commentDB.updated_at,
+                commentDB.creator_id,
+                commentDB.creator_name
+            )
+    
+            return comment.toBusinessModel()
+        })
+    
+        return comments
+    }
+    
     public createComment = async (input: CreateCommentInputDTO) => {
         const { postId, token, content } = input
 
@@ -131,7 +178,7 @@ export class CommentBusiness {
 
         const updatedCommentDB = commentToEdit.toCommentDBModel()
 
-        await this.commentDatabase.updateComment(updatedCommentDB, id)
+        await this.commentDatabase.updateComment(updatedCommentDB)
 
         const output = this.commentDTO.editCommentOutput(commentToEdit)
 
@@ -213,6 +260,8 @@ export class CommentBusiness {
             throw new NotFoundError("'id' não encontrado")
         }
 
+        const postId = await this.commentDatabase.getIdPostByCommentId(id)
+
         const userId = tokenPayload.id
         const likeDB = like ? 1 : 0
 
@@ -247,11 +296,11 @@ export class CommentBusiness {
             }
         } else if (likeDislikeExists === "already disliked") {
             if (like) {
-                await this.commentDatabase.removeLikeDislike(likeDislikeDB)
+                await this.commentDatabase.updateLikeDislike(likeDislikeDB)
                 comment.removeDislike()
                 comment.addLike()
             } else {
-                await this.commentDatabase.updateLikeDislike(likeDislikeDB)
+                await this.commentDatabase.removeLikeDislike(likeDislikeDB)
                 comment.removeDislike()
             }
         } else {
@@ -262,7 +311,7 @@ export class CommentBusiness {
         }
 
         const updatedPostDB = comment.toCommentDBModel()
-        await this.commentDatabase.updateComment(updatedPostDB, id)
+        await this.commentDatabase.updateComment(updatedPostDB)
 
         const output = this.commentDTO.likeDislikeCommentOutput(comment)
 
