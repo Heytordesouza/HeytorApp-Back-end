@@ -39,6 +39,7 @@ O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a inte
 - [x]  Update Post
 - [x]  Delete Post
 - [x]  Like Dislike Post
+- [x]  GetComments
 - [x]  Create Comment
 - [x]  Get Comments
 - [x]  Edit Comment
@@ -254,6 +255,31 @@ Segunda funcionalidade - Dislike
 {
   "message": "Você interagiu no post"
 }
+```
+
+### :dart: GET COMMENTS - Busca somente os comentários do post pela Id do post. Endpoint protegido, requer um token jwt para poder acessá-lo.
+```
+
+// request GET /comments/:id
+// headers.authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjYjU2NzAwLWRjMGEtNDU3YS04MWI1LTZ"
+
+// response
+// status 200 OK
+[
+  {
+    "id": "fee67c3b-467e-4c62-9bba-a1c93251e692",
+    "postId": "37646c59-e255-454e-aa71-e16586ec625c",
+    "content": "Interestelar",
+    "likes": 0,
+    "dislikes": 0,
+    "createdAt": "2023-04-04T18:14:37.814Z",
+    "updatedAt": "2023-04-04T18:14:37.814Z",
+    "creator": {
+      "id": "461d2cde-8357-45ab-8e3c-4c3392af057e",
+      "name": "Júlia"
+    }
+  }
+]
 ```
 
 ### :dart: CREATE COMMENT - Criação de um comentário para um post. Endpoint protegido, precisa de um token jwt para poder acessá-lo.
