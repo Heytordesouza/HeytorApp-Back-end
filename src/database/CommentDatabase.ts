@@ -19,11 +19,10 @@ export class CommentDatabase extends BaseDatabase {
         return postDB
     }
 
-    public async findComment(postId: string): Promise<CommentDB | undefined> {
-        const [commentDB]: CommentDB[] = await BaseDatabase
+    public async findComment(id: string): Promise<CommentDB | undefined> {
+        const [commentDB]: CommentDB[] | undefined = await BaseDatabase
             .connection(CommentDatabase.TABLE_COMMENTS)
-            .select("*")
-            .where({ post_id: postId })
+            .where({ id: id })
 
         return commentDB
     }
