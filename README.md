@@ -13,7 +13,7 @@
 # Introdução 
 O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a interação entre pessoas. Quem se cadastrar no aplicativo poderá criar, curtir e comentar publicações.
 
-🟢 Acesse por [aqui](https://labeddit-frontend-heytor.vercel.app/) o link do deploy.
+🟢 Acesse por [aqui](https://labeddit-frontend-heytor.vercel.app/) o link do deploy front-end do projeto.
 
 🟢 Acesse por [aqui](https://github.com/Heytordesouza/Labeddit-Front-end) o link do repositório do LabEddit-Front-end.
 
