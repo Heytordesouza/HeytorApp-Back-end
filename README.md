@@ -1,4 +1,4 @@
-<h1 align="center"> Projeto LabEddit </h1>
+<h1 align="center"> Projeto HeytorApp Backend </h1>
 
 # Índice 
 
@@ -11,11 +11,11 @@
 * [Link da Documentação](#link-da-documentação)
 
 # Introdução 
-O projeto LabEddit é uma rede social onde tem como objetivo a conexão e a interação entre pessoas. Quem se cadastrar no aplicativo poderá criar, curtir e comentar publicações.
+O projeto HeytorApp é uma rede social onde tem como objetivo a conexão e a interação entre pessoas. Quem se cadastrar no aplicativo poderá criar, curtir e comentar publicações.
 
-🟢 Acesse por [aqui](https://labeddit-frontend-heytor.vercel.app/) o link do deploy front-end do projeto.
+🟢 Acesse por [aqui](https://heytorapp.vercel.app/) o link do deploy front-end do projeto.
 
-🟢 Acesse por [aqui](https://github.com/Heytordesouza/Labeddit-Front-end) o link do repositório do LabEddit-Front-end.
+🟢 Acesse por [aqui](https://github.com/Heytordesouza/heytorapp) o link do repositório do LabEddit-Front-end.
 
 # Conteúdos abordados no projeto
 
@@ -429,10 +429,10 @@ Você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 [Git](https://git-scm.com), o [Node.js](https://nodejs.org/en/), o [Postman](https://www.postman.com) e um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 ```
 # Clone este repositório
-$ git clone (https://github.com/Heytordesouza/Labeddit-Backend.git)
+$ git clone (https://github.com/Heytordesouza/HeytorApp-Backend.git)
 
 # Acesse a pasta do projeto no terminal
-$ cd projeto-labeddit-back
+$ cd HeytorApp-Backend
 
 # Instale as dependências
 $ npm install
@@ -444,7 +444,7 @@ $ npm run dev
 ```
 # Banco de dados
 
-![Labeddit (1)](https://raw.githubusercontent.com/Heytordesouza/Labeddit-Backend/main/dbdiagram.png)
+![HeytorApp (1)](https://raw.githubusercontent.com/Heytordesouza/HeytorApp-Backend/main/dbdiagram.png)
 
 https://dbdiagram.io/d/642490005758ac5f17253b20
 
