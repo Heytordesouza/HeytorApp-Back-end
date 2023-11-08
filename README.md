@@ -1,4 +1,4 @@
-<h1 align="center"> Projeto HeytorApp Backend </h1>
+<h1 align="center"> Projeto HeytorApp Back-end </h1>
 
 # Índice 
 
