@@ -15,7 +15,7 @@ O projeto HeytorApp é uma rede social onde tem como objetivo a conexão e a int
 
 🟢 Acesse por [aqui](https://heytorapp.vercel.app/) o link do deploy front-end do projeto.
 
-🟢 Acesse por [aqui](https://github.com/Heytordesouza/heytorapp) o link do repositório do LabEddit-Front-end.
+🟢 Acesse por [aqui](https://github.com/Heytordesouza/heytorapp) o link do repositório do HeytorApp Front-end.
 
 # Conteúdos abordados no projeto
 
