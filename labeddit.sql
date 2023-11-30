@@ -49,5 +49,3 @@ CREATE TABLE likes_dislikes_comments(
     FOREIGN KEY(user_id) REFERENCES users(id)
     FOREIGN KEY (comment_id) REFERENCES comments(id)
 );
-
-DROP TABLE likes_dislikes_comments;
